@@ -1,0 +1,41 @@
+{
+  "name": "ai-sniper-bot",
+  "version": "1.0.0",
+  "description": "AI-powered Solana sniper bot: detects new Raydium/pump.fun launches, runs rug-safety + LLM analysis, and executes risk-managed swaps via Jupiter.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": { "ai-sniper": "dist/index.js" },
+  "engines": { "node": ">=20.0.0" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src tests --ext .ts",
+    "format": "prettier --write \"{src,tests}/**/*.ts\""
+  },
+  "keywords": ["solana", "sniper", "trading-bot", "jupiter", "raydium", "pumpfun", "ai"],
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@solana/spl-token": "^0.4.9",
+    "@solana/web3.js": "^1.95.8",
+    "bs58": "^6.0.0",
+    "dotenv": "^16.4.7",
+    "pino": "^9.5.0",
+    "pino-pretty": "^13.0.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
+    "eslint": "^8.57.1",
+    "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
