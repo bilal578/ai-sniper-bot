@@ -45,6 +45,35 @@ ladder.
 
 Each stage can veto, and nothing downstream runs when it does.
 
+## Dashboard
+
+While the bot is running it serves a live dashboard on
+**<http://127.0.0.1:4311>** — open it in any browser.
+
+It shows, refreshing every 3 seconds:
+
+- **Net P&L** split into realised and open, wallet balance, win rate, and how
+  much of the daily loss budget is spent.
+- **Open positions** with live P&L against the last polled sell quote, peak
+  gain, age, and the safety/AI scores they were bought on. Each has a **Sell**
+  button for a manual exit at market.
+- **Activity feed** — every token the bot judged and *why* it decided that:
+  which safety check failed and with what value, what the AI scored it and its
+  reasoning, or which risk limit blocked it. This is the part worth watching:
+  it tells you whether your filters are too loose or too tight.
+- **Closed positions** with realised P&L and exit reason.
+- **Pause buys** — stops new entries immediately. Open positions keep being
+  monitored and exited normally.
+
+The dashboard binds to loopback only. It displays your wallet and can sell your
+positions, so pointing `DASHBOARD_HOST` at anything else requires
+`DASHBOARD_TOKEN` to be set — the bot refuses to start otherwise. With a token
+set, reach it at `http://host:4311/?token=...`.
+
+Set `DASHBOARD_ENABLED=false` to run headless. A dashboard that fails to start
+(port already busy, say) is logged and skipped — it never takes the trading loop
+down with it.
+
 ## Install
 
 Requires Node.js 20 or newer.
@@ -62,7 +91,7 @@ need `WALLET_PRIVATE_KEY`, and for AI analysis an `ANTHROPIC_API_KEY`.
 ## Usage
 
 ```bash
-npm run dev -- run          # watch and trade (dry run by default)
+npm run dev -- run          # watch and trade (dry run by default) + dashboard
 npm run dev -- buy <mint>   # run one mint through the whole pipeline
 npm run dev -- positions    # open and closed positions with P&L
 npm run dev -- balance      # wallet address, SOL balance, mode
@@ -125,6 +154,7 @@ first live run:
 | `MAX_BUY_TAX_PCT` | `5` | Token-2022 transfer fee ceiling. A high fee is a honeypot. |
 | `PRIORITY_FEE_MICRO_LAMPORTS` | `0` | `0` lets Jupiter estimate dynamically, capped by `MAX_PRIORITY_FEE_SOL`. |
 | `AI_MIN_SCORE` | `65` | Raise to trade less and more selectively. |
+| `DASHBOARD_HOST` | `127.0.0.1` | Off-loopback binding requires `DASHBOARD_TOKEN`. |
 | `AI_FAIL_OPEN` | `false` | Keep it false. An unreachable model should block trades, not wave them through. |
 
 ## Safety model
@@ -165,13 +195,15 @@ per-mint cooldown so a chopping token cannot drain you in fees.
 ```bash
 npm run typecheck   # tsc --noEmit
 npm run lint        # eslint
-npm test            # vitest — 72 tests
+npm test            # vitest — 93 tests
 npm run build       # compile to dist/
 ```
 
 The exit ladder, risk limits, config validation, verdict parsing, and mint
-extraction are all pure functions with no network dependency, and are covered
-by the test suite. CI runs typecheck, lint, tests and build on every push.
+extraction are all pure functions with no network dependency. The dashboard is
+covered by tests that boot a real HTTP server on an ephemeral port and exercise
+every route, including that control endpoints reject an unauthenticated caller.
+CI runs typecheck, lint, tests and build on every push.
 
 ## Risk
 

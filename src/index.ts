@@ -19,6 +19,9 @@ Usage:
 Flags:
   --liquidate-on-exit           Sell every open position on shutdown
 
+While the bot is running a live dashboard is served on http://127.0.0.1:4311
+(set DASHBOARD_ENABLED=false to turn it off).
+
 Configuration is read from .env — see .env.example for every option.
 `;
 

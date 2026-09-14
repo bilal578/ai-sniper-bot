@@ -102,6 +102,15 @@ const schema = z.object({
   WATCH_PUMPFUN: bool(true),
   MAX_TOKEN_AGE_SECONDS: num(120, 1, 86400),
 
+  // ---- Dashboard -----------------------------------------------------------
+  DASHBOARD_ENABLED: bool(true),
+  // 0 is valid and means "bind any free port" — useful for tests and for
+  // running several bots side by side.
+  DASHBOARD_PORT: num(4311, 0, 65535),
+  // Loopback by default: the dashboard can sell your positions.
+  DASHBOARD_HOST: z.string().default('127.0.0.1'),
+  DASHBOARD_TOKEN: z.string().optional(),
+
   // ---- Ops -----------------------------------------------------------------
   LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
   LOG_PRETTY: bool(true),
@@ -145,6 +154,16 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   }
   if (cfg.MIN_LIQUIDITY_SOL > cfg.MAX_LIQUIDITY_SOL) {
     throw new Error('MIN_LIQUIDITY_SOL cannot exceed MAX_LIQUIDITY_SOL.');
+  }
+
+  // The dashboard exposes the wallet and can trigger sells. Off-loopback it is
+  // reachable by anything that can route to the host, so a token is mandatory.
+  const loopback = ['127.0.0.1', 'localhost', '::1'].includes(cfg.DASHBOARD_HOST);
+  if (cfg.DASHBOARD_ENABLED && !loopback && !cfg.DASHBOARD_TOKEN?.trim()) {
+    throw new Error(
+      `DASHBOARD_HOST is ${cfg.DASHBOARD_HOST} (not loopback) but DASHBOARD_TOKEN is unset. ` +
+        'The dashboard can sell positions — refusing to expose it without a token.',
+    );
   }
 
   return {
