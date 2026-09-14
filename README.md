@@ -84,6 +84,9 @@ small VPS in the same region as your RPC provider: the bot has to stay up to
 manage exits, and a laptop that sleeps stops evaluating stop-losses on
 positions it is already holding.
 
+New here? **[docs/QUICKSTART-macos.md](docs/QUICKSTART-macos.md)** walks through
+a first dry run on a Mac, step by step.
+
 See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** for VPS setup, the systemd
 service, Docker, and how to reach the dashboard safely over an SSH tunnel.
 
@@ -104,6 +107,7 @@ need `WALLET_PRIVATE_KEY`, and for AI analysis an `ANTHROPIC_API_KEY`.
 ## Usage
 
 ```bash
+npm run doctor              # check your setup before anything else
 npm run dev -- run          # watch and trade (dry run by default) + dashboard
 npm run dev -- buy <mint>   # run one mint through the whole pipeline
 npm run dev -- positions    # open and closed positions with P&L

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { loadConfig, LAMPORTS_PER_SOL } from './config.js';
+import { runDoctor } from './doctor.js';
 import { initLogger, getLogger } from './logger.js';
 import { SniperBot } from './bot.js';
 import { PositionStore } from './store/positions.js';
@@ -9,6 +10,7 @@ const HELP = `
 ai-sniper-bot — AI-assisted Solana sniper
 
 Usage:
+  ai-sniper doctor              Check your setup before running anything
   ai-sniper run                 Watch for new launches and trade them
   ai-sniper buy <mint>          Run one mint through the full pipeline
   ai-sniper positions           Show open and closed positions
@@ -31,6 +33,12 @@ async function main(): Promise<void> {
   if (command === 'help' || command === '--help' || command === '-h') {
     process.stdout.write(HELP);
     return;
+  }
+
+  // Runs before loadConfig on purpose: reporting a broken config is its job,
+  // so it must not die on the same error it exists to explain.
+  if (command === 'doctor') {
+    process.exit(await runDoctor());
   }
 
   const cfg = loadConfig();
