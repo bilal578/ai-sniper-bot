@@ -1,0 +1,65 @@
+# Runs the bot as a supervised service that survives reboots and crashes.
+#
+#   sudo cp deploy/ai-sniper.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now ai-sniper
+#
+# Adjust User and WorkingDirectory to match your install.
+
+[Unit]
+Description=AI Sniper Bot (Solana)
+Documentation=https://github.com/bilal578/ai-sniper-bot
+After=network-online.target
+Wants=network-online.target
+
+# Do not thrash on a config error: 5 failures in 5 minutes stops the unit so
+# the failure is visible instead of looping forever.
+# (These belong in [Unit], not [Service] — systemd ignores them in [Service].)
+StartLimitBurst=5
+StartLimitIntervalSec=300
+
+[Service]
+Type=simple
+User=sniper
+Group=sniper
+WorkingDirectory=/opt/ai-sniper-bot
+
+# The app reads .env from WorkingDirectory itself via dotenv. Do not use
+# EnvironmentFile: systemd parses quoting differently from dotenv, which would
+# silently change values like a base58 key.
+# Check your own path with `which node` — nvm and fnm installs are NOT in
+# /usr/bin, and systemd needs an absolute path.
+ExecStart=/usr/bin/node dist/index.js run
+
+# SIGTERM triggers the bot's own shutdown handler, which stops the watcher and
+# persists open positions. Give it room to finish before being killed.
+KillSignal=SIGTERM
+TimeoutStopSec=90
+
+Restart=always
+RestartSec=10
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ai-sniper
+
+# --- Hardening -------------------------------------------------------------
+# This process holds a funded private key. Give it as little as possible.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/ai-sniper-bot/data
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictNamespaces=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
+# Loopback plus outbound IP is all it needs; no raw sockets.
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

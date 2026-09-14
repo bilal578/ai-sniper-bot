@@ -74,6 +74,19 @@ Set `DASHBOARD_ENABLED=false` to run headless. A dashboard that fails to start
 (port already busy, say) is logged and skipped — it never takes the trading loop
 down with it.
 
+## Where it runs
+
+A Node.js process on a machine you control — your own computer, or a VPS.
+Nothing is hosted for you and nothing runs in the browser.
+
+For **dry-run testing**, your own machine is fine. For **live trading** use a
+small VPS in the same region as your RPC provider: the bot has to stay up to
+manage exits, and a laptop that sleeps stops evaluating stop-losses on
+positions it is already holding.
+
+See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** for VPS setup, the systemd
+service, Docker, and how to reach the dashboard safely over an SSH tunnel.
+
 ## Install
 
 Requires Node.js 20 or newer.
