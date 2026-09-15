@@ -1,0 +1,39 @@
+{
+  "name": "ai-tuber",
+  "version": "1.0.0",
+  "description": "AI YouTube content agent: researches topics, writes the script, and produces a full production package (metadata, shot list, thumbnails, subtitles, optional voiceover and MP4).",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": { "ai-tuber": "dist/index.js" },
+  "engines": { "node": ">=20.0.0" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "doctor": "node dist/index.js doctor",
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src tests --ext .ts",
+    "format": "prettier --write \"{src,tests}/**/*.ts\""
+  },
+  "keywords": ["youtube", "ai", "content", "script-writer", "claude", "video"],
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.125.0",
+    "dotenv": "^16.4.7",
+    "pino": "^9.5.0",
+    "pino-pretty": "^13.0.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
+    "eslint": "^8.57.1",
+    "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
