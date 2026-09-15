@@ -241,6 +241,14 @@ kind. Specifically:
 
 Do not trade with money you cannot afford to lose entirely.
 
+## Also in this repo
+
+[`youtube-agent/`](youtube-agent/) is a separate, unrelated tool that shares this
+repository: an AI agent that researches YouTube topics and writes the full video
+package — script, titles, description, shot list, subtitles and thumbnail
+concepts. It has its own dependencies, config and CI job, and nothing in it
+touches the trading code.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
